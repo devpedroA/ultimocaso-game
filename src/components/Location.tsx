@@ -186,7 +186,7 @@ export default function Location({ locais = [], onItemCollect, onPistaCollect, o
                 alt={localAtual.nome}
                 className="w-full h-64 object-cover rounded-lg mb-4"
                 width={400}
-                height={192}
+                height={50}
               />
               <p className="text-gray-600 mb-4">{localAtual.descricao}</p>
             </div>

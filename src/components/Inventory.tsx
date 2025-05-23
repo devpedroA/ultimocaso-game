@@ -1,5 +1,6 @@
 "use client"
 import { InventoryProps } from '@/types';
+import OptimizedImage from './OptimizedImage';
 
 export default function Inventory({ inventario }: InventoryProps) {
   return (
@@ -50,10 +51,12 @@ export default function Inventory({ inventario }: InventoryProps) {
                   <div className="flex items-start">
                     {item.imagem && (
                       <div className="mr-3 flex-shrink-0">
-                        <img 
-                          src={item.imagem} 
-                          alt={item.nome} 
+                        <OptimizedImage
+                          src={item.imagem}
+                          alt={item.nome}
                           className="w-12 h-12 object-cover rounded-md shadow-sm"
+                          width={48}
+                          height={48}
                         />
                       </div>
                     )}

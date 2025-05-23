@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable @next/next/no-img-element */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SuspectsProps, Suspeito } from '@/types';
 import OptimizedImage from './OptimizedImage';
 
@@ -12,7 +12,7 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
   const [evidenciasUsadas, setEvidenciasUsadas] = useState<Record<string, Set<string>>>({});
 
   // Função para verificar se todas as evidências de um suspeito foram usadas
-  const todasEvidenciasUsadas = (suspeitoId: string): boolean => {
+  const todasEvidenciasUsadas = useCallback((suspeitoId: string): boolean => {
     const suspeito = suspeitos[suspeitoId];
     if (!suspeito) return false;
     
@@ -22,7 +22,7 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
     return evidenciasDoSuspeito.every(evidencia => 
       evidenciasUsadasDoSuspeito.has(evidencia)
     );
-  };
+  }, [suspeitos, evidenciasUsadas]);
 
   // Efeito para atualizar o status de interrogado quando todas as evidências forem usadas
   useEffect(() => {
