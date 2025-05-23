@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Item, Local, LocationProps } from '@/types';
 import { useState, useEffect } from 'react';
+import OptimizedImage from './OptimizedImage';
 
 export default function Location({ locais = [], onItemCollect, onPistaCollect, onBack, inventario = { itens: [], pistas: [] } }: LocationProps) {
   const [isClient, setIsClient] = useState(false);
@@ -31,7 +32,7 @@ export default function Location({ locais = [], onItemCollect, onPistaCollect, o
     // Inicializa pistas coletadas
     const pistasSet = new Set(inventario?.pistas || []);
     setPistasColetadas(pistasSet);
-  }, [isClient]); // Removidas as dependências locais e inventario
+  }, [isClient, locais, inventario?.itens, inventario?.pistas]); // Adicionadas as dependências faltantes
 
   const handleLocalClick = (local: Local) => {
     if (!local?.id) return;
@@ -180,13 +181,13 @@ export default function Location({ locais = [], onItemCollect, onPistaCollect, o
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              {localAtual.imagem && (
-                <img
-                  src={localAtual.imagem}
-                  alt={localAtual.nome || ''}
-                  className="w-full h-64 object-cover rounded-lg mb-4"
-                />
-              )}
+              <OptimizedImage 
+                src={localAtual.imagem} 
+                alt={localAtual.nome}
+                className="w-full h-64 object-cover rounded-lg mb-4"
+                width={400}
+                height={192}
+              />
               <p className="text-gray-600 mb-4">{localAtual.descricao}</p>
             </div>
 

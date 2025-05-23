@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AccusationProps } from '@/types';
+import OptimizedImage from './OptimizedImage';
 
 export default function Accusation({ suspeitos, inventario, onAccusationComplete, onBack, solucao }: AccusationProps) {
   const [suspeitoSelecionado, setSuspeitoSelecionado] = useState<string>('');
@@ -73,10 +74,12 @@ export default function Accusation({ suspeitos, inventario, onAccusationComplete
 
             {selectedSuspect && (
               <div className="bg-gray-50 p-4 rounded-lg">
-                <img 
+                <OptimizedImage 
                   src={selectedSuspect.imagem} 
                   alt={selectedSuspect.nome}
-                  className="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-4 border-white shadow-md"
+                  className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md"
+                  width={128}
+                  height={128}
                 />
                 <h3 className="text-lg font-semibold text-center mb-2">{selectedSuspect.nome}</h3>
                 <p className="text-sm text-gray-600 text-center">{selectedSuspect.ocupacao}</p>

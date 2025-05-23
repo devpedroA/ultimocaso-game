@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect } from 'react';
 import { SuspectsProps, Suspeito } from '@/types';
+import OptimizedImage from './OptimizedImage';
 
 export default function Suspects({ suspeitos, inventario, onBack, actualCulpritId }: SuspectsProps) {
   const [selectedSuspect, setSelectedSuspect] = useState<Suspeito | null>(null);
@@ -28,7 +29,7 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
     if (selectedSuspect && todasEvidenciasUsadas(selectedSuspect.id)) {
       setSuspeitosInterrogados(prev => new Set([...prev, selectedSuspect.id]));
     }
-  }, [evidenciasUsadas, selectedSuspect]);
+  }, [evidenciasUsadas, selectedSuspect, todasEvidenciasUsadas]);
 
   const selecionarSuspeito = (suspeito: Suspeito): void => {
     setSelectedSuspect(suspeito);
@@ -146,10 +147,12 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
                 suspeitosInterrogados.has(nome) ? 'bg-green-50' : 'bg-gray-50'
               }`}>
                 <div className="p-4 flex items-center space-x-4">
-                  <img 
+                  <OptimizedImage 
                     src={suspeito.imagem} 
                     alt={suspeito.nome}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-16 h-16 rounded-full"
+                    width={64}
+                    height={64}
                   />
                   <div>
                     <h3 className="font-semibold">{suspeito.nome}</h3>
@@ -185,10 +188,12 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <img 
+          <OptimizedImage 
             src={selectedSuspect.imagem} 
             alt={selectedSuspect.nome}
-            className="w-full h-64 object-cover rounded-lg mb-4"
+            className="w-full h-64 rounded-lg mb-4"
+            width={400}
+            height={256}
           />
           <div className="space-y-4">
             <div>
