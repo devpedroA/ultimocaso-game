@@ -187,14 +187,16 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <OptimizedImage 
-            src={selectedSuspect.imagem} 
-            alt={selectedSuspect.nome}
-            className="w-full h-64 rounded-lg mb-4"
-            width={400}
-            height={256}
-          />
+        <div className="border border-gray-200 rounded-lg  p-4 bg-gray-50">
+          <div className="flex justify-center mb-4">
+            <OptimizedImage
+              src={selectedSuspect.imagem}
+              alt={selectedSuspect.nome}
+              className="w-48 h-48 rounded-lg object-cover shadow-2xl border-8"
+              width={192}
+              height={192}
+            />
+          </div>
           <div className="space-y-4">
             <div>
               <h3 className="font-semibold mb-2">📝 Informações</h3>
@@ -273,7 +275,7 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
                         <img
                           src={item.imagem}
                           alt={item.nome}
-                          className="w-full h-32 object-cover rounded-md mb-3"
+                          className="w-full h-32 object-cover shadonw-2xl"
                         />
                       )}
                       <div className="flex items-center justify-between w-full">

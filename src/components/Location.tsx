@@ -184,9 +184,9 @@ export default function Location({ locais = [], onItemCollect, onPistaCollect, o
               <OptimizedImage 
                 src={localAtual.imagem} 
                 alt={localAtual.nome}
-                className="w-full h-64 object-cover rounded-lg mb-4"
-                width={400}
-                height={50}
+                className="w-full object-cover rounded-lg mb-4"
+                width={350}
+                height={200}
               />
               <p className="text-gray-600 mb-4">{localAtual.descricao}</p>
             </div>
