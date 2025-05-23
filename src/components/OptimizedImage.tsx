@@ -27,7 +27,7 @@ export default function OptimizedImage({ src, alt, className = '', width = 200, 
         alt={alt}
         width={width}
         height={height}
-        className="object-cover"
+        className="object-cover rounded-full shadow-2xl"
         onError={handleError}
         unoptimized={src.startsWith('http')} // Skip optimization for external URLs
       />

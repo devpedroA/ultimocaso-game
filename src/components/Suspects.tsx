@@ -192,9 +192,9 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
             <OptimizedImage
               src={selectedSuspect.imagem}
               alt={selectedSuspect.nome}
-              className="w-48 h-48 rounded-lg object-cover shadow-2xl border-8"
-              width={192}
-              height={192}
+              className="w-48 h-48 rounded-full object-cover shadow-2xl border-8"
+              width={200}
+              height={200}
             />
           </div>
           <div className="space-y-4">
