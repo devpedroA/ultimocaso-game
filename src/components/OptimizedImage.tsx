@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useState } from 'react';
 
 interface OptimizedImageProps {
   src: string;
@@ -9,14 +10,26 @@ interface OptimizedImageProps {
 }
 
 export default function OptimizedImage({ src, alt, className = '', width = 200, height = 200 }: OptimizedImageProps) {
+  const [imgSrc, setImgSrc] = useState(src);
+  const [error, setError] = useState(false);
+
+  const handleError = () => {
+    if (!error) {
+      setError(true);
+      setImgSrc('/images/default-avatar.png'); // Fallback to a default image
+    }
+  };
+
   return (
     <div className={className}>
       <Image
-        src={src}
+        src={imgSrc}
         alt={alt}
         width={width}
         height={height}
         className="object-cover"
+        onError={handleError}
+        unoptimized={src.startsWith('http')} // Skip optimization for external URLs
       />
     </div>
   );

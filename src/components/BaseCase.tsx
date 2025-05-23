@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Caso, Inventario, Item, BaseCaseProps } from '@/types';
+import { Inventario, Item, BaseCaseProps } from '@/types';
 import Location from './Location';
 import Suspects from './Suspects';
 import Accusation from './Accusation';
