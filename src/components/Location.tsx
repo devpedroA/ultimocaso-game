@@ -1,16 +1,8 @@
 'use client';
 
 /* eslint-disable @next/next/no-img-element */
-import { Item, Local } from '@/types';
+import { Item, Local, LocationProps } from '@/types';
 import { useState, useEffect } from 'react';
-
-interface LocationProps {
-  locais: Local[];
-  onItemCollect: (item: Item) => void;
-  onPistaCollect: (pista: string) => void;
-  onBack: () => void;
-  inventario: { itens: Item[]; pistas: string[] };
-}
 
 export default function Location({ locais = [], onItemCollect, onPistaCollect, onBack, inventario = { itens: [], pistas: [] } }: LocationProps) {
   const [isClient, setIsClient] = useState(false);

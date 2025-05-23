@@ -1,9 +1,5 @@
 "use client"
-import { Inventario } from '@/types';
-
-interface InventoryProps {
-  inventario: Inventario;
-}
+import { InventoryProps } from '@/types';
 
 export default function Inventory({ inventario }: InventoryProps) {
   return (

@@ -1,16 +1,11 @@
+'use client';
+
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect } from 'react';
-import { BancoSuspeitos, Inventario } from '@/types';
-
-interface SuspectsProps {
-  suspeitos: BancoSuspeitos;
-  inventario: Inventario;
-  onBack: () => void;
-  actualCulpritId: string;
-}
+import { SuspectsProps, Suspeito } from '@/types';
 
 export default function Suspects({ suspeitos, inventario, onBack, actualCulpritId }: SuspectsProps) {
-  const [suspeitoSelecionado, setSuspeitoSelecionado] = useState<string | null>(null);
+  const [selectedSuspect, setSelectedSuspect] = useState<Suspeito | null>(null);
   const [evidenciaSelecionada, setEvidenciaSelecionada] = useState<string>('');
   const [suspeitosInterrogados, setSuspeitosInterrogados] = useState<Set<string>>(new Set());
   const [evidenciasUsadas, setEvidenciasUsadas] = useState<Record<string, Set<string>>>({});
@@ -30,40 +25,56 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
 
   // Efeito para atualizar o status de interrogado quando todas as evidências forem usadas
   useEffect(() => {
-    if (suspeitoSelecionado && todasEvidenciasUsadas(suspeitoSelecionado)) {
-      setSuspeitosInterrogados(prev => new Set([...prev, suspeitoSelecionado]));
+    if (selectedSuspect && todasEvidenciasUsadas(selectedSuspect.id)) {
+      setSuspeitosInterrogados(prev => new Set([...prev, selectedSuspect.id]));
     }
-  }, [evidenciasUsadas, suspeitoSelecionado]);
+  }, [evidenciasUsadas, selectedSuspect]);
 
-  const selecionarSuspeito = (nome: string): void => {
-    setSuspeitoSelecionado(nome);
+  const selecionarSuspeito = (suspeito: Suspeito): void => {
+    setSelectedSuspect(suspeito);
     setEvidenciaSelecionada('');
     // Inicializa o conjunto de evidências usadas para o suspeito se não existir
-    if (!evidenciasUsadas[nome]) {
+    if (!evidenciasUsadas[suspeito.id]) {
       setEvidenciasUsadas(prev => ({
         ...prev,
-        [nome]: new Set()
+        [suspeito.id]: new Set()
       }));
     }
   };
 
   const getResposta = (suspeitoId: string, evidenciaId: string): string => {
     const suspeito = suspeitos[suspeitoId];
-    if (!suspeito) return '';
+    if (!suspeito) {
+      console.log('Suspeito não encontrado:', suspeitoId);
+      return '';
+    }
     
     const isCulprit = suspeitoId === actualCulpritId;
-    console.log('Suspeito:', suspeitoId, 'É culpado:', isCulprit, 'Culprito atual:', actualCulpritId);
+    console.log('Status do suspeito:', {
+      id: suspeitoId,
+      nome: suspeito.nome,
+      isCulprit,
+      actualCulpritId
+    });
     
-    const reacao = isCulprit 
-      ? suspeito.dialogos.reacao.culpado[evidenciaId]
-      : suspeito.dialogos.reacao.inocente[evidenciaId];
+    // Verifica se existe reação específica para a evidência
+    const reacaoCulpado = suspeito.dialogos.reacao.culpado[evidenciaId];
+    const reacaoInocente = suspeito.dialogos.reacao.inocente[evidenciaId];
+    
+    console.log('Reações encontradas:', {
+      evidenciaId,
+      reacaoCulpado,
+      reacaoInocente
+    });
 
-    console.log('Reação encontrada:', reacao);
-    
-    if (reacao) {
-      return reacao.text;
+    // Retorna a reação apropriada baseada no status de culpa
+    if (isCulprit && reacaoCulpado) {
+      return reacaoCulpado.text;
+    } else if (!isCulprit && reacaoInocente) {
+      return reacaoInocente.text;
     }
 
+    // Se não houver reação específica, retorna o texto geral
     return suspeito.dialogos.textoGeral;
   };
 
@@ -91,20 +102,25 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
   };
 
   const selecionarEvidencia = (itemId: string): void => {
-    if (suspeitoSelecionado) {
-      const evidenciasUsadasDoSuspeito = evidenciasUsadas[suspeitoSelecionado] || new Set();
+    if (selectedSuspect) {
+      console.log('Selecionando evidência:', {
+        suspeito: selectedSuspect.nome,
+        evidenciaId: itemId
+      });
+      
+      const evidenciasUsadasDoSuspeito = evidenciasUsadas[selectedSuspect.id] || new Set();
       if (!evidenciasUsadasDoSuspeito.has(itemId)) {
         setEvidenciaSelecionada(itemId);
         // Marcar evidência como usada imediatamente ao ser selecionada
         setEvidenciasUsadas(prev => ({
           ...prev,
-          [suspeitoSelecionado]: new Set([...prev[suspeitoSelecionado], itemId])
+          [selectedSuspect.id]: new Set([...prev[selectedSuspect.id], itemId])
         }));
       }
     }
   };
 
-  if (!suspeitoSelecionado) {
+  if (!selectedSuspect) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
         <div className="flex justify-between items-center mb-6">
@@ -121,7 +137,7 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
           {Object.entries(suspeitos).map(([nome, suspeito]) => (
             <div
               key={nome}
-              onClick={() => selecionarSuspeito(nome)}
+              onClick={() => selecionarSuspeito(suspeito)}
               className={`cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg ${
                 suspeitosInterrogados.has(nome) ? 'bg-green-50' : ''
               }`}
@@ -153,15 +169,14 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
     );
   }
 
-  const suspeito = suspeitos[suspeitoSelecionado];
-  const evidenciasUsadasDoSuspeito = evidenciasUsadas[suspeitoSelecionado] || new Set();
+  const evidenciasUsadasDoSuspeito = evidenciasUsadas[selectedSuspect.id] || new Set();
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Interrogatório: {suspeito.nome}</h2>
+        <h2 className="text-2xl font-bold">Interrogatório: {selectedSuspect.nome}</h2>
         <button
-          onClick={() => setSuspeitoSelecionado(null)}
+          onClick={() => setSelectedSuspect(null)}
           className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
         >
           Voltar
@@ -171,21 +186,21 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <img 
-            src={suspeito.imagem} 
-            alt={suspeito.nome}
+            src={selectedSuspect.imagem} 
+            alt={selectedSuspect.nome}
             className="w-full h-64 object-cover rounded-lg mb-4"
           />
           <div className="space-y-4">
             <div>
               <h3 className="font-semibold mb-2">📝 Informações</h3>
-              <p className="text-gray-600">{suspeito.descricao}</p>
+              <p className="text-gray-600">{selectedSuspect.descricao}</p>
             </div>
             <div>
               <h3 className="font-semibold mb-2">👤 Personalidade</h3>
               <div className="flex flex-wrap gap-2">
-                {suspeito.personalidade.map((trait, index) => (
+                {selectedSuspect.personalidade.map((trait, index) => (
                   <span
-                    key={`${suspeito.nome}-trait-${index}`}
+                    key={`${selectedSuspect.nome}-trait-${index}`}
                     className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm"
                   >
                     {trait}
@@ -196,8 +211,8 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
             <div>
               <h3 className="font-semibold mb-2">🤝 Relacionamentos</h3>
               <ul className="space-y-1">
-                {Object.entries(suspeito.relacoes).map(([pessoa, relacao]) => (
-                  <li key={`${suspeito.nome}-rel-${pessoa}`} className="text-sm text-gray-600">
+                {Object.entries(selectedSuspect.relacoes).map(([pessoa, relacao]) => (
+                  <li key={`${selectedSuspect.nome}-rel-${pessoa}`} className="text-sm text-gray-600">
                     <span className="font-medium">{pessoa}:</span> {relacao}
                   </li>
                 ))}
@@ -218,7 +233,7 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
 
                   {/* Resposta é mostrada imediatamente */}
                   <p className="text-gray-600 italic mt-2">
-                    {getResposta(suspeitoSelecionado, evidenciaSelecionada)}
+                    {getResposta(selectedSuspect.id, evidenciaSelecionada)}
                   </p>
                 </>
               ) : (
@@ -233,12 +248,12 @@ export default function Suspects({ suspeitos, inventario, onBack, actualCulpritI
             <h3 className="font-semibold mb-3">🔍 Evidências</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {inventario.itens
-                .filter(item => suspeito.evidenciasPerson.includes(item.id))
+                .filter(item => selectedSuspect.evidenciasPerson.includes(item.id))
                 .map(item => {
                   const jaUsada = evidenciasUsadasDoSuspeito.has(item.id);
                   return (
                     <button
-                      key={`${suspeito.nome}-evid-${item.id}`}
+                      key={`${selectedSuspect.nome}-evid-${item.id}`}
                       onClick={() => selecionarEvidencia(item.id)}
                       disabled={jaUsada}
                       className={`flex flex-col items-start p-4 rounded-lg shadow transition-colors text-left w-full h-full

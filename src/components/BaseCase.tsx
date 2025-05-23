@@ -1,16 +1,11 @@
 import { useState } from 'react';
-import { Caso, Inventario, Item } from '@/types';
+import { Caso, Inventario, Item, BaseCaseProps } from '@/types';
 import Location from './Location';
 import Suspects from './Suspects';
 import Accusation from './Accusation';
 import Inventory from './Inventory';
 
 type Page = 'main' | 'location' | 'suspects' | 'accusation';
-
-interface BaseCaseProps {
-  caso: Caso;
-  onCaseComplete: (success: boolean) => void;
-}
 
 export default function BaseCase({ caso, onCaseComplete }: BaseCaseProps) {
   const [currentPage, setCurrentPage] = useState<Page>('main');
@@ -98,6 +93,7 @@ export default function BaseCase({ caso, onCaseComplete }: BaseCaseProps) {
               onItemCollect={handleItemCollect}
               onPistaCollect={handlePistaCollect}
               onBack={() => setCurrentPage('main')}
+              inventario={inventory}
             />
           )}
 

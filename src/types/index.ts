@@ -94,3 +94,46 @@ export interface Caso {
         evidencias: string[];
     };
 }
+
+export interface LocationProps {
+    locais: Local[];
+    onItemCollect: (item: Item) => void;
+    onPistaCollect: (pista: string) => void;
+    onBack: () => void;
+    inventario: Inventario;
+}
+
+export interface SuspectsProps {
+    suspeitos: BancoSuspeitos;
+    inventario: Inventario;
+    onBack: () => void;
+    actualCulpritId: string;
+}
+
+export interface AccusationProps {
+    suspeitos: BancoSuspeitos;
+    inventario: Inventario;
+    onAccusationComplete: (success: boolean) => void;
+    onBack: () => void;
+    solucao: {
+        culpado: string;
+        motivo: string;
+        evidencias: string[];
+    };
+}
+
+export interface BaseCaseProps {
+    caso: Caso;
+    onCaseComplete: (success: boolean) => void;
+}
+
+export interface InventoryProps {
+    inventario: Inventario;
+}
+
+export interface SuspectDialogProps {
+    suspeito: Suspeito;
+    onClose: () => void;
+    inventario: Inventario;
+    isGuilty: boolean;
+}
